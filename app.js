@@ -341,7 +341,6 @@ function highlightPart(partId, active) {
       partEl.style.filter = 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.8))';
     } else if (heartAnatomy[partId].blood === 'deoxygenated') {
       partEl.style.filter = 'drop-shadow(0 0 12px rgba(37, 99, 235, 0.8))';
-    } else {
       partEl.style.filter = 'drop-shadow(0 0 12px rgba(255, 255, 255, 0.8))';
     }
   } else {
