@@ -330,18 +330,28 @@ function updateUILanguage() {
 
 // ==================== INTERACTIVE ANATOMY LOGIC ====================
 
-// Highlight associated SVG path
+// Highlight associated SVG overlay circle
 function highlightPart(partId, active) {
   const partEl = document.getElementById(`part-${partId}`);
   if (!partEl) return;
   
   if (active) {
     partEl.classList.add('glowing');
-    if (heartAnatomy[partId].blood === 'oxygenated') {
-      partEl.style.filter = 'drop-shadow(0 0 12px rgba(239, 68, 68, 0.8))';
-    }
+    const color = heartAnatomy[partId].blood === 'oxygenated' ? 'rgba(239, 68, 68, 0.85)' : 
+                  heartAnatomy[partId].blood === 'deoxygenated' ? 'rgba(37, 99, 235, 0.85)' : 
+                  'rgba(251, 191, 36, 0.85)';
+    const fillColor = heartAnatomy[partId].blood === 'oxygenated' ? 'rgba(239, 68, 68, 0.15)' : 
+                      heartAnatomy[partId].blood === 'deoxygenated' ? 'rgba(37, 99, 235, 0.15)' : 
+                      'rgba(251, 191, 36, 0.15)';
+    partEl.setAttribute('stroke', color);
+    partEl.setAttribute('stroke-width', '3');
+    partEl.setAttribute('stroke-dasharray', '4 2');
+    partEl.setAttribute('fill', fillColor);
+    partEl.style.filter = `drop-shadow(0 0 8px ${color})`;
   } else {
     partEl.classList.remove('glowing');
+    partEl.setAttribute('stroke', 'none');
+    partEl.setAttribute('fill', 'none');
     partEl.style.filter = 'none';
   }
 }

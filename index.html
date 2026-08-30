@@ -75,132 +75,28 @@
               <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
                 <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.5" />
               </filter>
-              
-              <!-- Red gradients for oxygenated parts -->
-              <linearGradient id="grad-ox-main" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#ff4b6b" />
-                <stop offset="100%" stop-color="#a80027" />
-              </linearGradient>
-              <linearGradient id="grad-ox-dark" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#cc1c39" />
-                <stop offset="100%" stop-color="#700016" />
-              </linearGradient>
-
-              <!-- Blue gradients for deoxygenated parts -->
-              <linearGradient id="grad-deox-main" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#3b82f6" />
-                <stop offset="100%" stop-color="#1e3a8a" />
-              </linearGradient>
-              <linearGradient id="grad-deox-dark" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#1d4ed8" />
-                <stop offset="100%" stop-color="#0f172a" />
-              </linearGradient>
-
-              <!-- Septum / Tissue gradient -->
-              <linearGradient id="grad-muscle" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#b45309" />
-                <stop offset="50%" stop-color="#78350f" />
-                <stop offset="100%" stop-color="#451a03" />
-              </linearGradient>
-
-              <!-- Valve gradient -->
-              <linearGradient id="grad-valve" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stop-color="#e2e8f0" />
-                <stop offset="100%" stop-color="#94a3b8" />
-              </linearGradient>
             </defs>
 
-            <!-- BACKGROUND HEART MUSCLE WALL -->
-            <!-- The outer muscular structure. Thick wall on Left Ventricle (right side of image) -->
-            <path id="part-muscle" class="anatomical-part" data-name="Septum"
-              d="M 170,240 C 130,280 120,400 200,470 C 240,510 320,550 360,550 C 420,550 480,450 460,320 C 450,260 410,230 380,230 C 375,230 360,250 350,260 C 330,220 290,220 270,230 C 260,240 240,240 230,230 C 210,210 180,220 170,240 Z" 
-              fill="url(#grad-muscle)" filter="url(#shadow)" stroke="#331505" stroke-width="4" />
+            <!-- EMBEDDED HIGH QUALITY MEDICAL ILLUSTRATION -->
+            <image href="heart.png" x="20" y="31" width="560" height="537" filter="url(#shadow)" />
 
-            <!-- SUPERIOR VENA CAVA (Blue tube top left) -->
-            <path id="part-svc" class="anatomical-part" data-name="Superior Vena Cava"
-              d="M 160,50 L 200,50 L 200,200 L 160,200 Z" 
-              fill="url(#grad-deox-main)" stroke="#1e3a8a" stroke-width="2" />
-            <ellipse cx="180" cy="50" rx="20" ry="8" fill="url(#grad-deox-dark)" stroke="#1e3a8a" stroke-width="2" />
-
-            <!-- INFERIOR VENA CAVA (Blue tube bottom left) -->
-            <path id="part-ivc" class="anatomical-part" data-name="Inferior Vena Cava"
-              d="M 150,440 L 185,420 L 170,520 L 135,540 Z" 
-              fill="url(#grad-deox-main)" stroke="#1e3a8a" stroke-width="2" />
-            <ellipse cx="152" cy="530" rx="18" ry="8" transform="rotate(-15 152 530)" fill="url(#grad-deox-dark)" stroke="#1e3a8a" stroke-width="2" />
-
-            <!-- AORTA (Red Arch) -->
-            <!-- Back arch first -->
-            <path id="part-aorta" class="anatomical-part" data-name="Aorta"
-              d="M 330,230 C 330,120 390,70 410,70 C 440,70 440,110 430,160 C 410,220 370,250 340,260 Z" 
-              fill="url(#grad-ox-main)" stroke="#700016" stroke-width="2" />
-            <!-- Branch 1 -->
-            <path d="M 370,110 L 365,60 C 365,55 375,55 375,60 L 385,100 Z" fill="url(#grad-ox-main)" stroke="#700016" stroke-width="1.5" />
-            <!-- Branch 2 -->
-            <path d="M 390,95 L 392,50 C 392,45 402,45 402,50 L 402,90 Z" fill="url(#grad-ox-main)" stroke="#700016" stroke-width="1.5" />
-            <!-- Branch 3 -->
-            <path d="M 412,90 L 422,53 C 422,48 432,50 430,55 L 420,92 Z" fill="url(#grad-ox-main)" stroke="#700016" stroke-width="1.5" />
-
-            <!-- PULMONARY ARTERY (Blue Arch T-tube) -->
-            <path id="part-pulmonary-artery" class="anatomical-part" data-name="Pulmonary Artery"
-              d="M 275,170 C 265,115 315,110 330,120 C 345,130 335,175 285,185 L 285,250 L 245,245 Z" 
-              fill="url(#grad-deox-main)" stroke="#1e3a8a" stroke-width="2" />
-            <!-- Left Branch -->
-            <path d="M 230,150 C 220,130 200,140 200,150 L 260,175 Z" fill="url(#grad-deox-main)" stroke="#1e3a8a" stroke-width="1.5" />
-            <!-- Right Branch -->
-            <path d="M 320,130 C 350,110 370,130 360,145 L 305,160 Z" fill="url(#grad-deox-main)" stroke="#1e3a8a" stroke-width="1.5" />
-
-            <!-- PULMONARY VEINS (Red small tubes on right side) -->
-            <path id="part-pulmonary-veins" class="anatomical-part" data-name="Pulmonary Veins"
-              d="M 430,200 L 475,190 L 470,225 L 425,220 Z M 435,225 L 480,220 L 475,250 L 430,245 Z" 
-              fill="url(#grad-ox-main)" stroke="#700016" stroke-width="1.5" />
-
-            <!-- INNER CAVITIES / CHAMBERS -->
-            
-            <!-- RIGHT ATRIUM (Upper left chamber, blue interior) -->
-            <path id="part-ra" class="anatomical-part" data-name="Right Atrium"
-              d="M 180,200 C 150,220 150,270 190,290 C 225,290 230,250 220,200 Z" 
-              fill="url(#grad-deox-dark)" stroke="#3b82f6" stroke-width="1" opacity="0.9" />
-
-            <!-- LEFT ATRIUM (Upper right chamber, red interior) -->
-            <path id="part-la" class="anatomical-part" data-name="Left Atrium"
-              d="M 350,250 C 380,240 430,240 410,290 C 380,300 360,285 345,260 Z" 
-              fill="url(#grad-ox-dark)" stroke="#ff4b6b" stroke-width="1" opacity="0.9" />
-
-            <!-- INNER SEPTUM WALL OVERLAY (visual divider) -->
-            <path id="part-septum-divider" class="anatomical-part" data-name="Septum"
-              d="M 280,290 C 290,290 295,350 290,480 C 280,480 270,390 270,290 Z" 
-              fill="#521b04" stroke="#78350f" stroke-width="1" />
-
-            <!-- RIGHT VENTRICLE (Lower left chamber, blue interior) -->
-            <path id="part-rv" class="anatomical-part" data-name="Right Ventricle"
-              d="M 195,310 C 170,370 190,440 260,460 C 275,440 275,370 260,310 Z" 
-              fill="url(#grad-deox-dark)" stroke="#3b82f6" stroke-width="1" opacity="0.9" />
-
-            <!-- LEFT VENTRICLE (Lower right chamber, red interior, thick myocardium surrounding) -->
-            <path id="part-lv" class="anatomical-part" data-name="Left Ventricle"
-              d="M 300,310 C 310,380 325,470 350,470 C 410,450 420,380 375,310 Z" 
-              fill="url(#grad-ox-dark)" stroke="#ff4b6b" stroke-width="1" opacity="0.9" />
-
-            <!-- VALVES -->
-            <!-- Tricuspid Valve (RA to RV) -->
-            <path id="part-tricuspid" class="anatomical-part valve" data-name="Tricuspid Valve"
-              d="M 190,295 C 205,300 215,300 225,295 L 220,305 C 210,310 200,310 195,305 Z" 
-              fill="url(#grad-valve)" stroke="#475569" stroke-width="1.5" />
-
-            <!-- Mitral Valve / Bicuspid (LA to LV) -->
-            <path id="part-mitral" class="anatomical-part valve" data-name="Mitral Valve"
-              d="M 350,295 C 360,300 370,300 380,295 L 375,305 C 365,310 355,310 350,305 Z" 
-              fill="url(#grad-valve)" stroke="#475569" stroke-width="1.5" />
-
-            <!-- Pulmonary Valve (RV to PA) -->
-            <path id="part-pulmonary-valve" class="anatomical-part valve" data-name="Pulmonary Valve"
-              d="M 252,242 C 248,252 258,258 262,248" 
-              fill="none" stroke="url(#grad-valve)" stroke-linecap="round" stroke-width="4" />
-
-            <!-- Aortic Valve (LV to Aorta) -->
-            <path id="part-aortic-valve" class="anatomical-part valve" data-name="Aortic Valve"
-              d="M 315,268 C 310,274 322,278 322,270" 
-              fill="none" stroke="url(#grad-valve)" stroke-linecap="round" stroke-width="4" />
+            <!-- ANATOMICAL HIGHLIGHT CIRCLES (Invisible by default, glowing in study mode) -->
+            <g id="anatomical-overlays">
+              <circle id="part-svc" class="anatomical-part" data-name="Superior Vena Cava" cx="200" cy="160" r="22" fill="transparent" pointer-events="all" />
+              <circle id="part-aorta" class="anatomical-part" data-name="Aorta" cx="310" cy="110" r="30" fill="transparent" pointer-events="all" />
+              <circle id="part-pulmonary-artery" class="anatomical-part" data-name="Pulmonary Artery" cx="320" cy="180" r="25" fill="transparent" pointer-events="all" />
+              <circle id="part-pulmonary-veins" class="anatomical-part" data-name="Pulmonary Veins" cx="460" cy="220" r="20" fill="transparent" pointer-events="all" />
+              <circle id="part-ra" class="anatomical-part" data-name="Right Atrium" cx="210" cy="270" r="35" fill="transparent" pointer-events="all" />
+              <circle id="part-la" class="anatomical-part" data-name="Left Atrium" cx="410" cy="230" r="35" fill="transparent" pointer-events="all" />
+              <circle id="part-tricuspid" class="anatomical-part" data-name="Tricuspid Valve" cx="235" cy="320" r="20" fill="transparent" pointer-events="all" />
+              <circle id="part-mitral" class="anatomical-part" data-name="Mitral Valve" cx="395" cy="305" r="20" fill="transparent" pointer-events="all" />
+              <circle id="part-pulmonary-valve" class="anatomical-part" data-name="Pulmonary Valve" cx="305" cy="245" r="16" fill="transparent" pointer-events="all" />
+              <circle id="part-aortic-valve" class="anatomical-part" data-name="Aortic Valve" cx="330" cy="280" r="16" fill="transparent" pointer-events="all" />
+              <circle id="part-rv" class="anatomical-part" data-name="Right Ventricle" cx="260" cy="400" r="45" fill="transparent" pointer-events="all" />
+              <circle id="part-lv" class="anatomical-part" data-name="Left Ventricle" cx="380" cy="410" r="45" fill="transparent" pointer-events="all" />
+              <circle id="part-septum" class="anatomical-part" data-name="Septum" cx="320" cy="440" r="25" fill="transparent" pointer-events="all" />
+              <circle id="part-ivc" class="anatomical-part" data-name="Inferior Vena Cava" cx="180" cy="460" r="22" fill="transparent" pointer-events="all" />
+            </g>
 
             <!-- CONNECTOR LINES & ANCHOR DOTS (INTERACTIVE NODES) -->
             <!-- The circles are user interaction centers. Connected by lines to anatomical structures -->
