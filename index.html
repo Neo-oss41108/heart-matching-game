@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioMatch - เกมจับคู่โครงสร้างหัวใจ</title>
+  <meta name="description" content="เกมจับคู่และเรียนรู้โครงสร้างกายวิภาคของหัวใจมนุษย์ (Heart Anatomy) เล่นง่าย รองรับทั้งมือถือ แท็บเล็ต และคอมพิวเตอร์">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons for modern HUD -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Canvas Confetti and QRCode CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="dark-theme">
+  <div class="app-container">
+    
+    <!-- Header -->
+    <header class="main-header glass-card">
+      <div class="header-logo">
+        <i class="fa-solid fa-heart-pulse pulse-icon"></i>
+        <h1>CardioMatch</h1>
+        <span class="badge" id="mode-badge">Study</span>
+      </div>
+      
+      <!-- Control Panel -->
+      <div class="header-controls">
+        <div class="mode-selector select-wrapper">
+          <select id="game-mode">
+            <option value="study">📖 โหมดเรียนรู้ (Study)</option>
+            <option value="practice">🎯 ฝึกซ้อม (Practice)</option>
+            <option value="time_attack">⚡ จับเวลา (Time Attack)</option>
+          </select>
+        </div>
+        
+        <button id="lang-toggle" class="btn btn-secondary btn-icon-text">
+          <i class="fa-solid fa-language"></i>
+          <span id="lang-text">EN</span>
+        </button>
+
+        <button id="btn-leaderboard" class="btn btn-secondary btn-icon" title="ตารางคะแนน">
+          <i class="fa-solid fa-trophy"></i>
+        </button>
+
+        <button id="btn-mobile-share" class="btn btn-primary btn-icon-text">
+          <i class="fa-solid fa-mobile-screen-button"></i>
+          <span>เล่นบนมือถือ</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Game Board -->
+    <main class="game-board">
+      
+      <!-- Left Column: The Heart SVG Diagram -->
+      <section class="diagram-section glass-card">
+        <div class="diagram-container">
+          <svg id="heart-svg" viewBox="0 0 600 600" width="100%" height="100%">
+            <!-- Definitions for Gradients and Filters -->
+            <defs>
+              <!-- Drop Shadow and Glow Filters -->
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="8" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+              </filter>
+              <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+                <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.5" />
+              </filter>
+              
+              <!-- Red gradients for oxygenated parts -->
+              <linearGradient id="grad-ox-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff4b6b" />
+                <stop offset="100%" stop-color="#a80027" />
+              </linearGradient>
+              <linearGradient id="grad-ox-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#cc1c39" />
+                <stop offset="100%" stop-color="#700016" />
+              </linearGradient>
+
+              <!-- Blue gradients for deoxygenated parts -->
+              <linearGradient id="grad-deox-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#3b82f6" />
+                <stop offset="100%" stop-color="#1e3a8a" />
+              </linearGradient>
+              <linearGradient id="grad-deox-dark" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#1d4ed8" />
+                <stop offset="100%" stop-color="#0f172a" />
+              </linearGradient>
+
+              <!-- Septum / Tissue gradient -->
+              <linearGradient id="grad-muscle" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#b45309" />
+                <stop offset="50%" stop-color="#78350f" />
+                <stop offset="100%" stop-color="#451a03" />
+              </linearGradient>
+
+              <!-- Valve gradient -->
+              <linearGradient id="grad-valve" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#e2e8f0" />
+                <stop offset="100%" stop-color="#94a3b8" />
+              </linearGradient>
+            </defs>
+
+            <!-- BACKGROUND HEART MUSCLE WALL -->
+            <!-- The outer muscular structure. Thick wall on Left Ventricle (right side of image) -->
+            <path id="part-muscle" class="anatomical-part" data-name="Septum"
+              d="M 170,240 C 130,280 120,400 200,470 C 240,510 320,550 360,550 C 420,550 480,450 460,320 C 450,260 410,230 380,230 C 375,230 360,250 350,260 C 330,220 290,220 270,230 C 260,240 240,240 230,230 C 210,210 180,220 170,240 Z" 
+              fill="url(#grad-muscle)" filter="url(#shadow)" stroke="#331505" stroke-width="4" />
+
+            <!-- SUPERIOR VENA CAVA (Blue tube top left) -->
+            <path id="part-svc" class="anatomical-part" data-name="Superior Vena Cava"
+              d="M 160,50 L 200,50 L 200,200 L 160,200 Z" 
+              fill="url(#grad-deox-main)" stroke="#1e3a8a" stroke-width="2" />
+            <ellipse cx="180" cy="50" rx="20" ry="8" fill="url(#grad-deox-dark)" stroke="#1e3a8a" stroke-width="2" />
+
+            <!-- INFERIOR VENA CAVA (Blue tube bottom left) -->
+            <path id="part-ivc" class="anatomical-part" data-name="Inferior Vena Cava"
+              d="M 150,440 L 185,420 L 170,520 L 135,540 Z" 
+              fill="url(#grad-deox-main)" stroke="#1e3a8a" stroke-width="2" />
+            <ellipse cx="152" cy="530" rx="18" ry="8" transform="rotate(-15 152 530)" fill="url(#grad-deox-dark)" stroke="#1e3a8a" stroke-width="2" />
+
+            <!-- AORTA (Red Arch) -->
+            <!-- Back arch first -->
+            <path id="part-aorta" class="anatomical-part" data-name="Aorta"
+              d="M 330,230 C 330,120 390,70 410,70 C 440,70 440,110 430,160 C 410,220 370,250 340,260 Z" 
+              fill="url(#grad-ox-main)" stroke="#700016" stroke-width="2" />
+            <!-- Branch 1 -->
+            <path d="M 370,110 L 365,60 C 365,55 375,55 375,60 L 385,100 Z" fill="url(#grad-ox-main)" stroke="#700016" stroke-width="1.5" />
+            <!-- Branch 2 -->
+            <path d="M 390,95 L 392,50 C 392,45 402,45 402,50 L 402,90 Z" fill="url(#grad-ox-main)" stroke="#700016" stroke-width="1.5" />
+            <!-- Branch 3 -->
+            <path d="M 412,90 L 422,53 C 422,48 432,50 430,55 L 420,92 Z" fill="url(#grad-ox-main)" stroke="#700016" stroke-width="1.5" />
+
+            <!-- PULMONARY ARTERY (Blue Arch T-tube) -->
+            <path id="part-pulmonary-artery" class="anatomical-part" data-name="Pulmonary Artery"
+              d="M 275,170 C 265,115 315,110 330,120 C 345,130 335,175 285,185 L 285,250 L 245,245 Z" 
+              fill="url(#grad-deox-main)" stroke="#1e3a8a" stroke-width="2" />
+            <!-- Left Branch -->
+            <path d="M 230,150 C 220,130 200,140 200,150 L 260,175 Z" fill="url(#grad-deox-main)" stroke="#1e3a8a" stroke-width="1.5" />
+            <!-- Right Branch -->
+            <path d="M 320,130 C 350,110 370,130 360,145 L 305,160 Z" fill="url(#grad-deox-main)" stroke="#1e3a8a" stroke-width="1.5" />
+
+            <!-- PULMONARY VEINS (Red small tubes on right side) -->
+            <path id="part-pulmonary-veins" class="anatomical-part" data-name="Pulmonary Veins"
+              d="M 430,200 L 475,190 L 470,225 L 425,220 Z M 435,225 L 480,220 L 475,250 L 430,245 Z" 
+              fill="url(#grad-ox-main)" stroke="#700016" stroke-width="1.5" />
+
+            <!-- INNER CAVITIES / CHAMBERS -->
+            
+            <!-- RIGHT ATRIUM (Upper left chamber, blue interior) -->
+            <path id="part-ra" class="anatomical-part" data-name="Right Atrium"
+              d="M 180,200 C 150,220 150,270 190,290 C 225,290 230,250 220,200 Z" 
+              fill="url(#grad-deox-dark)" stroke="#3b82f6" stroke-width="1" opacity="0.9" />
+
+            <!-- LEFT ATRIUM (Upper right chamber, red interior) -->
+            <path id="part-la" class="anatomical-part" data-name="Left Atrium"
+              d="M 350,250 C 380,240 430,240 410,290 C 380,300 360,285 345,260 Z" 
+              fill="url(#grad-ox-dark)" stroke="#ff4b6b" stroke-width="1" opacity="0.9" />
+
+            <!-- INNER SEPTUM WALL OVERLAY (visual divider) -->
+            <path id="part-septum-divider" class="anatomical-part" data-name="Septum"
+              d="M 280,290 C 290,290 295,350 290,480 C 280,480 270,390 270,290 Z" 
+              fill="#521b04" stroke="#78350f" stroke-width="1" />
+
+            <!-- RIGHT VENTRICLE (Lower left chamber, blue interior) -->
+            <path id="part-rv" class="anatomical-part" data-name="Right Ventricle"
+              d="M 195,310 C 170,370 190,440 260,460 C 275,440 275,370 260,310 Z" 
+              fill="url(#grad-deox-dark)" stroke="#3b82f6" stroke-width="1" opacity="0.9" />
+
+            <!-- LEFT VENTRICLE (Lower right chamber, red interior, thick myocardium surrounding) -->
+            <path id="part-lv" class="anatomical-part" data-name="Left Ventricle"
+              d="M 300,310 C 310,380 325,470 350,470 C 410,450 420,380 375,310 Z" 
+              fill="url(#grad-ox-dark)" stroke="#ff4b6b" stroke-width="1" opacity="0.9" />
+
+            <!-- VALVES -->
+            <!-- Tricuspid Valve (RA to RV) -->
+            <path id="part-tricuspid" class="anatomical-part valve" data-name="Tricuspid Valve"
+              d="M 190,295 C 205,300 215,300 225,295 L 220,305 C 210,310 200,310 195,305 Z" 
+              fill="url(#grad-valve)" stroke="#475569" stroke-width="1.5" />
+
+            <!-- Mitral Valve / Bicuspid (LA to LV) -->
+            <path id="part-mitral" class="anatomical-part valve" data-name="Mitral Valve"
+              d="M 350,295 C 360,300 370,300 380,295 L 375,305 C 365,310 355,310 350,305 Z" 
+              fill="url(#grad-valve)" stroke="#475569" stroke-width="1.5" />
+
+            <!-- Pulmonary Valve (RV to PA) -->
+            <path id="part-pulmonary-valve" class="anatomical-part valve" data-name="Pulmonary Valve"
+              d="M 252,242 C 248,252 258,258 262,248" 
+              fill="none" stroke="url(#grad-valve)" stroke-linecap="round" stroke-width="4" />
+
+            <!-- Aortic Valve (LV to Aorta) -->
+            <path id="part-aortic-valve" class="anatomical-part valve" data-name="Aortic Valve"
+              d="M 315,268 C 310,274 322,278 322,270" 
+              fill="none" stroke="url(#grad-valve)" stroke-linecap="round" stroke-width="4" />
+
+            <!-- CONNECTOR LINES & ANCHOR DOTS (INTERACTIVE NODES) -->
+            <!-- The circles are user interaction centers. Connected by lines to anatomical structures -->
+            <g class="interactive-nodes">
+              
+              <!-- Superior Vena Cava -->
+              <line x1="180" y1="100" x2="80" y2="100" class="pointer-line" />
+              <circle id="anchor-svc" cx="80" cy="100" r="12" class="anchor-dot" data-part="svc" />
+
+              <!-- Aorta -->
+              <line x1="410" y1="90" x2="520" y2="90" class="pointer-line" />
+              <circle id="anchor-aorta" cx="520" cy="90" r="12" class="anchor-dot" data-part="aorta" />
+
+              <!-- Pulmonary Artery -->
+              <line x1="270" y1="150" x2="60" y2="170" class="pointer-line" />
+              <circle id="anchor-pulmonary-artery" cx="60" cy="170" r="12" class="anchor-dot" data-part="pulmonary-artery" />
+
+              <!-- Pulmonary Veins -->
+              <line x1="460" y1="210" x2="540" y2="210" class="pointer-line" />
+              <circle id="anchor-pulmonary-veins" cx="540" cy="210" r="12" class="anchor-dot" data-part="pulmonary-veins" />
+
+              <!-- Right Atrium -->
+              <line x1="180" y1="240" x2="60" y2="240" class="pointer-line" />
+              <circle id="anchor-ra" cx="60" cy="240" r="12" class="anchor-dot" data-part="ra" />
+
+              <!-- Left Atrium -->
+              <line x1="390" y1="260" x2="540" y2="280" class="pointer-line" />
+              <circle id="anchor-la" cx="540" cy="280" r="12" class="anchor-dot" data-part="la" />
+
+              <!-- Tricuspid Valve -->
+              <line x1="210" y1="300" x2="70" y2="320" class="pointer-line" />
+              <circle id="anchor-tricuspid" cx="70" cy="320" r="12" class="anchor-dot" data-part="tricuspid" />
+
+              <!-- Mitral Valve -->
+              <line x1="365" y1="300" x2="530" y2="340" class="pointer-line" />
+              <circle id="anchor-mitral" cx="530" cy="340" r="12" class="anchor-dot" data-part="mitral" />
+
+              <!-- Pulmonary Valve -->
+              <line x1="255" y1="247" x2="100" y2="200" class="pointer-line" />
+              <circle id="anchor-pulmonary-valve" cx="100" cy="200" r="12" class="anchor-dot" data-part="pulmonary-valve" />
+
+              <!-- Aortic Valve -->
+              <line x1="318" y1="270" x2="480" y2="240" class="pointer-line" />
+              <circle id="anchor-aortic-valve" cx="480" cy="240" r="12" class="anchor-dot" data-part="aortic-valve" />
+
+              <!-- Right Ventricle -->
+              <line x1="220" y1="380" x2="80" y2="400" class="pointer-line" />
+              <circle id="anchor-rv" cx="80" cy="400" r="12" class="anchor-dot" data-part="rv" />
+
+              <!-- Left Ventricle -->
+              <line x1="350" y1="400" x2="520" y2="420" class="pointer-line" />
+              <circle id="anchor-lv" cx="520" cy="420" r="12" class="anchor-dot" data-part="lv" />
+
+              <!-- Septum -->
+              <line x1="285" y1="410" x2="285" y2="520" class="pointer-line" />
+              <circle id="anchor-septum" cx="285" cy="520" r="12" class="anchor-dot" data-part="septum" />
+
+              <!-- Inferior Vena Cava -->
+              <line x1="165" y1="480" x2="70" y2="480" class="pointer-line" />
+              <circle id="anchor-ivc" cx="70" cy="480" r="12" class="anchor-dot" data-part="ivc" />
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- Right Column: Deck of Anatomy Labels / Study Information Panel -->
+      <section class="controls-section">
+        
+        <!-- Info Card (Active in Study mode) -->
+        <div id="info-panel" class="info-panel glass-card">
+          <div class="info-header">
+            <h3 id="info-title">กรุณาเลือกโครงสร้างหัวใจ</h3>
+            <span class="info-badge" id="info-blood-type">Oxygenated</span>
+          </div>
+          <p id="info-desc" class="info-description">
+            แตะที่ป้ายชี้จุดสีเหลืองบนภาพหัวใจเพื่อเรียนรู้ชื่อ หน้าที่การทำงาน และทิศทางการไหลเวียนโลหิต
+          </p>
+          <div class="info-details-box">
+            <div class="detail-item">
+              <span class="detail-label">โครงสร้าง (Structure):</span>
+              <span class="detail-val" id="info-struct-name">-</span>
+            </div>
+            <div class="detail-item">
+              <span class="detail-label">หน้าที่ (Function):</span>
+              <span class="detail-val" id="info-struct-func">-</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Label Matching Deck (Active in Practice / Time Attack mode) -->
+        <div id="deck-panel" class="deck-panel glass-card hide">
+          <h3>ป้ายคำศัพท์ (Anatomical Labels)</h3>
+          <p class="deck-hint">ลากป้ายคำศัพท์ไปวางที่จุดวงกลม หรือคลิกเลือกป้ายแล้วคลิกจุดวงกลมเป้าหมายบนรูป</p>
+          
+          <div id="labels-deck" class="labels-deck">
+            <!-- Cards generated dynamically by app.js -->
+          </div>
+        </div>
+
+      </section>
+    </main>
+
+    <!-- Bottom HUD Bar -->
+    <footer class="hud-bar glass-card">
+      <div class="hud-item">
+        <span class="hud-label"><i class="fa-solid fa-clock"></i> เวลา</span>
+        <span class="hud-value" id="hud-timer">00:00</span>
+      </div>
+
+      <div class="hud-item">
+        <span class="hud-label"><i class="fa-solid fa-crosshairs"></i> ความแม่นยำ</span>
+        <span class="hud-value" id="hud-accuracy">100%</span>
+      </div>
+
+      <div class="hud-item">
+        <span class="hud-label"><i class="fa-solid fa-star"></i> คะแนน</span>
+        <span class="hud-value" id="hud-score">0</span>
+      </div>
+
+      <div class="hud-progress-container">
+        <span class="hud-label">ความคืบหน้า</span>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="hud-progress">0%</div>
+        </div>
+      </div>
+
+      <button id="btn-reset" class="btn btn-danger btn-icon-text">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span>เริ่มใหม่</span>
+      </button>
+    </footer>
+
+    <!-- ==================== DIALOG MODALS ==================== -->
+
+    <!-- 1. Victory / Game Over Modal -->
+    <div id="modal-victory" class="modal-overlay">
+      <div class="modal-content glass-card card-glowing-success">
+        <div class="modal-header">
+          <i class="fa-solid fa-crown victory-crown"></i>
+          <h2>ยอดเยี่ยมมาก! สำเร็จแล้ว!</h2>
+          <p>คุณจับคู่โครงสร้างหัวใจครบทั้ง 14 ส่วนเรียบร้อย</p>
+        </div>
+        
+        <div class="results-stats">
+          <div class="stat-card">
+            <span class="stat-label">โหมดการเล่น</span>
+            <span class="stat-val" id="result-mode">Time Attack</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">คะแนนรวม</span>
+            <span class="stat-val text-glowing" id="result-score">1,240</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">เวลาที่ใช้</span>
+            <span class="stat-val" id="result-time">01:42</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">ความแม่นยำ</span>
+            <span class="stat-val" id="result-accuracy">85%</span>
+          </div>
+        </div>
+
+        <!-- Leaderboard Registry form (Only visible in Time Attack score) -->
+        <div id="leaderboard-register-box" class="leaderboard-register-box">
+          <p>บันทึกสถิติของคุณลงในตารางคะแนนสูงสุดประจำเครื่อง</p>
+          <div class="input-group">
+            <input type="text" id="player-name-input" placeholder="ใส่ชื่อของคุณ..." maxlength="15">
+            <button id="btn-submit-score" class="btn btn-success">บันทึก</button>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-victory-replay" class="btn btn-primary btn-icon-text">
+            <i class="fa-solid fa-arrow-rotate-right"></i> เล่นอีกครั้ง
+          </button>
+          <button id="btn-victory-close" class="btn btn-secondary">ปิด</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Leaderboard Modal -->
+    <div id="modal-leaderboard" class="modal-overlay">
+      <div class="modal-content glass-card">
+        <div class="modal-header">
+          <h2><i class="fa-solid fa-trophy text-amber"></i> ตารางคะแนนสูงสุด (Leaderboard)</h2>
+          <p>สถิติยอดเยี่ยมของโหมดจับเวลา (Time Attack)</p>
+        </div>
+
+        <div class="leaderboard-table-container">
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th style="width: 15%">อันดับ</th>
+                <th style="width: 45%">ชื่อผู้เล่น</th>
+                <th style="width: 20%">คะแนน</th>
+                <th style="width: 20%">เวลา</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+              <!-- Dynamically populated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-clear-leaderboard" class="btn btn-danger-outline">ล้างข้อมูล</button>
+          <button id="btn-leaderboard-close" class="btn btn-secondary">ปิดหน้าต่าง</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Mobile Share QR Modal -->
+    <div id="modal-mobile-share" class="modal-overlay">
+      <div class="modal-content glass-card">
+        <div class="modal-header">
+          <h2><i class="fa-solid fa-qrcode text-primary"></i> เล่นเกมนี้บนอุปกรณ์เครื่องอื่น</h2>
+          <p>เปิดกล้องมือถือหรือแท็บเล็ตของคุณเพื่อสแกน QR Code แล้วร่วมสนุกได้ทันที</p>
+        </div>
+
+        <div class="qrcode-container">
+          <div id="qrcode-box"></div>
+          <div class="url-display">
+            <p>หรือเข้าสู่ลิงก์โดยตรงผ่านเครือข่าย Wi-Fi เดียวกัน:</p>
+            <code id="local-url-text">http://localhost:8000</code>
+          </div>
+        </div>
+
+        <div class="modal-info-alert">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>โปรดตรวจสอบให้แน่ใจว่าอุปกรณ์ที่สแกนและคอมพิวเตอร์เครื่องนี้ <strong>เชื่อมต่ออยู่ในวง Wi-Fi เครือข่ายเดียวกัน</strong></span>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-mobile-close" class="btn btn-secondary">ปิดหน้าต่าง</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
